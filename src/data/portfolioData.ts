@@ -49,8 +49,8 @@ export interface FloatingBadge {
 
 export const portfolioData = {
   profile: {
-    firstName: "Himanshu",
-    lastName: "Gautam", // Easily customizable
+    firstName: "HIMANSHU",
+    lastName: "GAUTAM", // Easily customizable
     fullName: "Himanshu Gautam",
     handle: "gautamhimanshu7703@gmail.com",
     role: "Full Stack Engineer & Creative Developer",
@@ -67,7 +67,7 @@ export const portfolioData = {
     twitter: "https://twitter.com",
     discord: "@gautam_dev",
     resumeUrl: "#",
-    avatarUrl: "public/Monochrome Tech Portfolio Portrait.png",
+    avatarUrl: "/Monochrome Tech Portfolio Portrait.png",
     aboutPortraitUrl: "/himanshuimage.jpeg",
     experienceYears: "5+",
     projectsCompleted: "35+",
