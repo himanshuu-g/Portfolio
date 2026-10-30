@@ -33,16 +33,25 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) =>
                   <Code size={18} />
                 </div>
                 <span className="absolute -top-7 text-[10px] font-mono font-semibold bg-zinc-900 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  React / TS
+                  React.js
                 </span>
               </div>
 
               <div className="group relative flex flex-col items-center cursor-pointer transition-transform hover:-translate-y-1.5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shadow-md">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-yellow-600 text-white flex items-center justify-center shadow-md">
                   <Globe size={18} />
                 </div>
                 <span className="absolute -top-7 text-[10px] font-mono font-semibold bg-zinc-900 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  Next.js
+                  JavaScript
+                </span>
+              </div>
+
+              <div className="group relative flex flex-col items-center cursor-pointer transition-transform hover:-translate-y-1.5">
+                <div className="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-md">
+                  <Cpu size={18} />
+                </div>
+                <span className="absolute -top-7 text-[10px] font-mono font-semibold bg-zinc-900 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  Python
                 </span>
               </div>
 
@@ -51,7 +60,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) =>
                   <Server size={18} />
                 </div>
                 <span className="absolute -top-7 text-[10px] font-mono font-semibold bg-zinc-900 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  Node / Go
+                  MongoDB
                 </span>
               </div>
 
@@ -60,16 +69,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ onContactClick }) =>
                   <Layers size={18} />
                 </div>
                 <span className="absolute -top-7 text-[10px] font-mono font-semibold bg-zinc-900 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  Tailwind
-                </span>
-              </div>
-
-              <div className="group relative flex flex-col items-center cursor-pointer transition-transform hover:-translate-y-1.5">
-                <div className="w-9 h-9 rounded-xl bg-orange-600 text-white flex items-center justify-center shadow-md">
-                  <Cpu size={18} />
-                </div>
-                <span className="absolute -top-7 text-[10px] font-mono font-semibold bg-zinc-900 text-white px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                  Cloud & AI
+                  Firebase / SQL
                 </span>
               </div>
             </div>

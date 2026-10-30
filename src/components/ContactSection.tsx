@@ -74,6 +74,12 @@ export const ContactSection: React.FC = () => {
               {portfolioData.profile.email}
             </div>
 
+            {portfolioData.profile.phone && (
+              <div className="text-sm font-mono text-zinc-600">
+                📞 {portfolioData.profile.phone}
+              </div>
+            )}
+
             <div className="pt-2 border-t border-zinc-100 flex items-center justify-between text-xs text-zinc-500">
               <span className="flex items-center gap-1.5">
                 <MapPin size={13} />

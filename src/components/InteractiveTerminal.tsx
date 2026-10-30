@@ -74,10 +74,11 @@ export const InteractiveTerminal: React.FC<TerminalProps> = ({ isOpen, onClose }
       case 'skills':
         output = (
           <div className="space-y-2 text-xs font-mono text-zinc-300">
-            <p className="text-cyan-400 font-bold">Technical Stack & Competencies:</p>
-            <p>• <span className="text-zinc-100 font-bold">Frontend:</span> React, Next.js, TypeScript, Tailwind CSS, Framer Motion, WebGL</p>
-            <p>• <span className="text-zinc-100 font-bold">Backend & DB:</span> Node.js, Go, Python, PostgreSQL, Redis, GraphQL, REST</p>
-            <p>• <span className="text-zinc-100 font-bold">DevOps & Cloud:</span> Docker, Kubernetes, AWS, Cloudflare Workers, CI/CD</p>
+            <p className="text-cyan-400 font-bold">Himanshu's Technical Stack:</p>
+            <p>• <span className="text-zinc-100 font-bold">Languages:</span> JavaScript, Python, HTML5, CSS3</p>
+            <p>• <span className="text-zinc-100 font-bold">Libraries/Frameworks:</span> React.js, Flask</p>
+            <p>• <span className="text-zinc-100 font-bold">Databases & Cloud:</span> MongoDB, Firebase, MySQL, SQLite</p>
+            <p>• <span className="text-zinc-100 font-bold">AI / Tools:</span> MobileNet (CNN), Grad-CAM, OCR, Git/GitHub, VS Code</p>
           </div>
         );
         break;
