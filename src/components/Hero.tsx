@@ -1,13 +1,14 @@
 import React, { useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { portfolioData } from '../data/portfolioData';
-import { ChevronDown } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { ArrowRight } from 'lucide-react';
 
 interface HeroProps {
-  onScrollDown?: () => void;
+  onContactClick: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onScrollDown }) => {
+export const Hero: React.FC<HeroProps> = ({ onContactClick }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Mouse parallax motion values
@@ -19,11 +20,11 @@ export const Hero: React.FC<HeroProps> = ({ onScrollDown }) => {
   const smoothMouseY = useSpring(mouseY, springConfig);
 
   // Transform values for multi-plane 3D parallax depth
-  const portraitX = useTransform(smoothMouseX, [-400, 400], [-14, 14]);
-  const portraitY = useTransform(smoothMouseY, [-400, 400], [-10, 10]);
+  const portraitX = useTransform(smoothMouseX, [-400, 400], [-12, 12]);
+  const portraitY = useTransform(smoothMouseY, [-400, 400], [-8, 8]);
 
-  const bgTextX = useTransform(smoothMouseX, [-400, 400], [18, -18]);
-  const bgTextY = useTransform(smoothMouseY, [-400, 400], [10, -10]);
+  const bgTextX = useTransform(smoothMouseX, [-400, 400], [15, -15]);
+  const bgTextY = useTransform(smoothMouseY, [-400, 400], [8, -8]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!containerRef.current) return;
@@ -39,15 +40,14 @@ export const Hero: React.FC<HeroProps> = ({ onScrollDown }) => {
     mouseY.set(0);
   };
 
-  const handleScrollClick = () => {
-    if (onScrollDown) {
-      onScrollDown();
-    } else {
-      const target = document.getElementById('name-intro');
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
+  const triggerConfetti = () => {
+    confetti({
+      particleCount: 80,
+      spread: 70,
+      origin: { y: 0.8 },
+      colors: ['#111111', '#52525b', '#a1a1aa', '#38bdf8'],
+    });
+    onContactClick();
   };
 
   return (
@@ -56,28 +56,28 @@ export const Hero: React.FC<HeroProps> = ({ onScrollDown }) => {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full h-screen min-h-[680px] flex flex-col items-center justify-center pt-16 md:pt-20 pb-12 px-4 sm:px-6 md:px-12 overflow-hidden select-none"
+      className="relative w-full h-screen min-h-[640px] max-h-[1050px] flex flex-col justify-between pt-20 pb-6 md:pb-10 px-6 sm:px-10 md:px-16 overflow-hidden select-none"
     >
-      {/* Subtle Background Radial Ambient Glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-tr from-zinc-200/50 via-zinc-100/30 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
+      {/* Background Soft Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-tr from-zinc-200/50 via-zinc-100/20 to-transparent rounded-full blur-3xl pointer-events-none -z-10" />
 
-      {/* Main Hero Stage - Full Height & Spread Out */}
-      <div className="relative w-full max-w-7xl h-full flex-1 flex items-end justify-center">
+      {/* Center Stage: Watermark + Portrait + Floating Badges */}
+      <div className="relative w-full flex-1 flex items-end justify-center">
         
         {/* Layer 1: Giant Watermark Background Typography ("DEVELOPER") */}
         <motion.div
           style={{ x: bgTextX, y: bgTextY }}
           className="absolute inset-0 flex items-center justify-center pointer-events-none z-0"
         >
-          <span className="font-extrabold tracking-tighter uppercase text-[24vw] md:text-[20vw] leading-none text-zinc-300/40 select-none">
+          <span className="font-extrabold tracking-tighter uppercase text-[20vw] md:text-[18vw] leading-none text-zinc-300/45 select-none">
             DEVELOPER
           </span>
         </motion.div>
 
-        {/* Layer 2: Center Picture - Extended Height & Spread Out */}
+        {/* Layer 2: Center Cutout Portrait (Centered and extending down towards the name) */}
         <motion.div
           style={{ x: portraitX, y: portraitY }}
-          className="relative z-10 w-[88vw] sm:w-[480px] md:w-[560px] lg:w-[620px] h-[76vh] sm:h-[80vh] md:h-[84vh] max-h-[760px] flex items-end justify-center"
+          className="relative z-10 w-[78vw] sm:w-[420px] md:w-[480px] lg:w-[520px] h-[52vh] sm:h-[58vh] md:h-[64vh] max-h-[620px] flex items-end justify-center"
         >
           {/* Avatar Cutout Image with bottom gradient fade */}
           <div className="relative w-full h-full flex items-end justify-center overflow-hidden mask-gradient-bottom">
@@ -87,36 +87,33 @@ export const Hero: React.FC<HeroProps> = ({ onScrollDown }) => {
               className="w-full h-full object-cover object-top filter grayscale contrast-110 brightness-105 pointer-events-none"
               loading="eager"
             />
-            {/* Smooth base fade matching background color */}
-            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#f5f5f7] via-[#f5f5f7]/70 to-transparent pointer-events-none" />
+            {/* Soft base fade matching background */}
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#f5f5f7] via-[#f5f5f7]/60 to-transparent pointer-events-none" />
           </div>
-
-          {/* Availability Status Badge pinned near bottom of image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.4 }}
-            className="absolute bottom-12 sm:bottom-16 px-4 py-1.5 bg-white/95 backdrop-blur-md rounded-full shadow-xl border border-zinc-200/90 flex items-center gap-2.5 z-20"
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            <span className="text-xs font-semibold text-zinc-800 tracking-wide">
-              {portfolioData.profile.status.text}
-            </span>
-          </motion.div>
         </motion.div>
 
-        {/* Layer 3: Floating Skill Badges - Spread Wide Around the Picture */}
-        {/* Left Badges */}
+        {/* Layer 3: Floating Skill Badges (Screenshots 1 exact replica) */}
+        {/* Left Side Badges */}
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
+          initial={{ opacity: 0, x: -25 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.1 }}
-          className="absolute top-[22%] left-[1%] sm:left-[3%] md:left-[6%] lg:left-[10%] z-20 animate-float-slow"
+          className="absolute top-[16%] left-[2%] sm:left-[6%] md:left-[10%] lg:left-[14%] z-20 animate-float-slow"
         >
-          <div className="group cursor-default px-4 py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200 shadow-md hover:shadow-xl hover:border-zinc-400 transition-all duration-300">
+          <div className="group cursor-default px-4 py-1.5 md:py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-zinc-400 transition-all duration-300">
+            <span className="text-xs md:text-sm font-medium text-zinc-700 group-hover:text-zinc-950">
+              Web Design
+            </span>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, x: -25 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.25 }}
+          className="absolute top-[34%] left-[0%] sm:left-[3%] md:left-[6%] lg:left-[10%] z-20 animate-float-medium"
+        >
+          <div className="group cursor-default px-4 py-1.5 md:py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-zinc-400 transition-all duration-300">
             <span className="text-xs md:text-sm font-medium text-zinc-700 group-hover:text-zinc-950">
               Full Stack Web
             </span>
@@ -124,89 +121,97 @@ export const Hero: React.FC<HeroProps> = ({ onScrollDown }) => {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.25 }}
-          className="absolute top-[44%] left-[0%] sm:left-[2%] md:left-[4%] lg:left-[7%] z-20 animate-float-medium"
-        >
-          <div className="group cursor-default px-4 py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200 shadow-md hover:shadow-xl hover:border-zinc-400 transition-all duration-300">
-            <span className="text-xs md:text-sm font-medium text-zinc-700 group-hover:text-zinc-950">
-              React & Next.js
-            </span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
+          initial={{ opacity: 0, x: -25 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="absolute top-[66%] left-[1%] sm:left-[3%] md:left-[5%] lg:left-[9%] z-20 animate-float-fast"
+          className="absolute top-[52%] left-[1%] sm:left-[4%] md:left-[8%] lg:left-[12%] z-20 animate-float-fast"
         >
-          <div className="group cursor-default px-4 py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200 shadow-md hover:shadow-xl hover:border-zinc-400 transition-all duration-300">
+          <div className="group cursor-default px-4 py-1.5 md:py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-zinc-400 transition-all duration-300">
             <span className="text-xs md:text-sm font-medium text-zinc-700 group-hover:text-zinc-950">
-              System Architecture
+              3D Motion
             </span>
           </div>
         </motion.div>
 
-        {/* Right Badges */}
+        {/* Right Side Badges */}
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
+          initial={{ opacity: 0, x: 25 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.15 }}
-          className="absolute top-[22%] right-[1%] sm:right-[3%] md:right-[6%] lg:right-[10%] z-20 animate-float-medium"
+          className="absolute top-[16%] right-[2%] sm:right-[6%] md:right-[10%] lg:right-[14%] z-20 animate-float-medium"
         >
-          <div className="group cursor-default px-4 py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200 shadow-md hover:shadow-xl hover:border-zinc-400 transition-all duration-300">
+          <div className="group cursor-default px-4 py-1.5 md:py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-zinc-400 transition-all duration-300">
             <span className="text-xs md:text-sm font-medium text-zinc-700 group-hover:text-zinc-950">
-              Cloud & DevOps
+              App Design
             </span>
           </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
+          initial={{ opacity: 0, x: 25 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="absolute top-[44%] right-[0%] sm:right-[2%] md:right-[4%] lg:right-[7%] z-20 animate-float-fast"
+          className="absolute top-[34%] right-[0%] sm:right-[3%] md:right-[6%] lg:right-[10%] z-20 animate-float-fast"
         >
-          <div className="group cursor-default px-4 py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200 shadow-md hover:shadow-xl hover:border-zinc-400 transition-all duration-300">
+          <div className="group cursor-default px-4 py-1.5 md:py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-zinc-400 transition-all duration-300">
             <span className="text-xs md:text-sm font-medium text-zinc-700 group-hover:text-zinc-950">
-              AI Integrations
+              System Design
             </span>
           </div>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 30 }}
+          initial={{ opacity: 0, x: 25 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, delay: 0.45 }}
-          className="absolute top-[66%] right-[1%] sm:right-[3%] md:right-[5%] lg:right-[9%] z-20 animate-float-slow"
+          className="absolute top-[52%] right-[1%] sm:right-[4%] md:right-[8%] lg:right-[12%] z-20 animate-float-slow"
         >
-          <div className="group cursor-default px-4 py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200 shadow-md hover:shadow-xl hover:border-zinc-400 transition-all duration-300">
+          <div className="group cursor-default px-4 py-1.5 md:py-2 bg-white/95 backdrop-blur-md rounded-full border border-zinc-200/90 shadow-sm hover:shadow-md hover:border-zinc-400 transition-all duration-300">
             <span className="text-xs md:text-sm font-medium text-zinc-700 group-hover:text-zinc-950">
-              API Engineering
+              Cloud & AI
             </span>
           </div>
         </motion.div>
       </div>
 
-      {/* Subtle Scroll Indicator Cue at Bottom of Hero */}
-      <motion.button
-        onClick={handleScrollClick}
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: [0, 8, 0] }}
-        transition={{
-          opacity: { delay: 0.8, duration: 0.6 },
-          y: { repeat: Infinity, duration: 2.2, ease: 'easeInOut' },
-        }}
-        className="absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-zinc-400 hover:text-zinc-900 transition-colors cursor-pointer z-30 focus:outline-none"
-        aria-label="Scroll to explore"
-      >
-        <span className="text-[10px] font-mono uppercase tracking-widest font-semibold">
-          Scroll to explore
-        </span>
-        <ChevronDown size={16} />
-      </motion.button>
+      {/* Layer 4: Bottom Name Typography & Badges - Overlapping Portrait Bottom (Screenshot 1 Exact Replica) */}
+      <div className="relative z-30 w-full max-w-6xl mx-auto flex flex-col justify-end -mt-8 sm:-mt-12 md:-mt-16 pointer-events-auto">
+        
+        {/* Pills row positioned right above the name */}
+        <div className="w-full flex items-center justify-between mb-1.5 sm:mb-2 px-1">
+          {/* Left Pill: "Hello, my name is" */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="px-3.5 py-1 rounded-full bg-white/90 backdrop-blur-md border border-zinc-200/90 shadow-sm text-zinc-700 text-xs font-semibold tracking-wide"
+          >
+            Hello, my name is
+          </motion.div>
+
+          {/* Right Pill: "Let's work together!" button */}
+          <motion.button
+            onClick={triggerConfetti}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className="group inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-white/90 hover:bg-zinc-900 text-zinc-800 hover:text-white border border-zinc-200/90 shadow-sm hover:shadow-md text-xs font-semibold transition-all duration-200 hover:-translate-y-0.5"
+          >
+            <span>Let's work together!</span>
+            <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+          </motion.button>
+        </div>
+
+        {/* Huge Bold Name Headline directly below the picture */}
+        <motion.h1
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.75, duration: 0.6 }}
+          className="text-6xl sm:text-7xl md:text-8xl lg:text-[7.2rem] xl:text-[8.5rem] font-black tracking-tight text-zinc-950 leading-[0.88] select-none text-left"
+        >
+          {portfolioData.profile.fullName}
+        </motion.h1>
+      </div>
     </section>
   );
 };

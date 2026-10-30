@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { NameIntro } from './components/NameIntro';
 import { AboutSection } from './components/AboutSection';
 import { WorkSection } from './components/WorkSection';
 import { BlogSection } from './components/BlogSection';
@@ -27,13 +26,6 @@ export function App() {
     }
   };
 
-  const scrollToIntro = () => {
-    const el = document.getElementById('name-intro');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
   return (
     <div className="relative min-h-screen bg-[#f5f5f7] text-[#111111] font-sans selection:bg-zinc-950 selection:text-white">
       {/* Interactive Particle & Filament Mesh */}
@@ -52,22 +44,19 @@ export function App() {
 
       {/* Main Content Sections */}
       <main className="relative z-10">
-        {/* Fullscreen Hero: Pure Picture Showcase, Watermark & Floating Badges */}
-        <Hero onScrollDown={scrollToIntro} />
+        {/* Screenshot 1: Front Page Hero with Picture, Floating Badges, and Name Directly Below */}
+        <Hero onContactClick={scrollToContact} />
 
-        {/* Scroll Section 1: Massive Editorial Name & "Let's work together!" Headline */}
-        <NameIntro onContactClick={scrollToContact} />
-
-        {/* Scroll Section 2: About Me, Bottom Tech Dock & Career Timeline */}
+        {/* Screenshot 2: About Me, Bottom Tech Dock & Career Timeline */}
         <AboutSection onContactClick={scrollToContact} />
 
-        {/* Scroll Section 3: Work & 3D Tilt Project Cards */}
+        {/* Screenshot 3: Work & 3D Tilt Project Cards */}
         <WorkSection onSelectProject={(p) => setSelectedProject(p)} />
 
-        {/* Scroll Section 4: Blog & Editorial Article Reader */}
+        {/* Screenshot 3: Blog & Editorial Article Reader */}
         <BlogSection />
 
-        {/* Scroll Section 5: Contact Form & Instant Email Copy */}
+        {/* Screenshot 3: Contact Form & Instant Email Copy */}
         <ContactSection />
       </main>
 
