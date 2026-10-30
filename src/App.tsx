@@ -3,7 +3,6 @@ import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { AboutSection } from './components/AboutSection';
 import { WorkSection } from './components/WorkSection';
-import { BlogSection } from './components/BlogSection';
 import { ContactSection } from './components/ContactSection';
 import { ProjectModal } from './components/ProjectModal';
 import { InteractiveTerminal } from './components/InteractiveTerminal';
@@ -52,9 +51,6 @@ export function App() {
 
         {/* Screenshot 3: Work & 3D Tilt Project Cards */}
         <WorkSection onSelectProject={(p) => setSelectedProject(p)} />
-
-        {/* Screenshot 3: Blog & Editorial Article Reader */}
-        <BlogSection />
 
         {/* Screenshot 3: Contact Form & Instant Email Copy */}
         <ContactSection />
