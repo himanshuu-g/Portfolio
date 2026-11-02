@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { portfolioData } from '../data/portfolioData';
-import { Mail, Copy, Check, Send, Sparkles, MapPin, Clock } from 'lucide-react';
+import { Mail, Copy, Check, Send, Sparkles, MapPin, Clock, Loader2, AlertCircle } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export const ContactSection: React.FC = () => {
   const [copied, setCopied] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    projectType: 'Web Development',
+    projectType: 'Full Stack Web App',
     message: '',
   });
 
@@ -19,14 +21,51 @@ export const ContactSection: React.FC = () => {
     setTimeout(() => setCopied(false), 2500);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    confetti({
-      particleCount: 70,
-      spread: 60,
-      origin: { y: 0.8 },
-    });
+    setIsSubmitting(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch('https://api.web3forms.com/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          access_key: '7b491326-3f78-4364-8466-c18ca8714cc0',
+          name: formData.name,
+          email: formData.email,
+          subject: `Portfolio Contact from ${formData.name} [${formData.projectType}]`,
+          message: formData.message,
+          from_name: `${formData.name} via Himanshu Portfolio`,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        setSubmitted(true);
+        setFormData({
+          name: '',
+          email: '',
+          projectType: 'Full Stack Web App',
+          message: '',
+        });
+        confetti({
+          particleCount: 80,
+          spread: 70,
+          origin: { y: 0.8 },
+          colors: ['#111111', '#52525b', '#a1a1aa', '#38bdf8'],
+        });
+      } else {
+        setErrorMessage(result.message || 'Unable to deliver message. Please try again or email directly.');
+      }
+    } catch {
+      setErrorMessage('Network connection error. Please try again or email directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -100,7 +139,7 @@ export const ContactSection: React.FC = () => {
             </span>
             <div className="text-xs text-zinc-700">
               <span className="font-semibold block">Currently Available</span>
-              Accepting select client work and engineering roles.
+              {portfolioData.profile.status.text}
             </div>
           </div>
         </div>
@@ -113,19 +152,26 @@ export const ContactSection: React.FC = () => {
                 <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                   <Check size={32} />
                 </div>
-                <h3 className="text-2xl font-bold text-zinc-900">Message Received!</h3>
+                <h3 className="text-2xl font-bold text-zinc-900">Message Delivered!</h3>
                 <p className="text-zinc-600 text-sm max-w-md mx-auto">
-                  Thank you for reaching out! I've received your note and will get back to you shortly.
+                  Thank you! Your message was sent directly to Himanshu's Gmail inbox (<span className="font-semibold text-zinc-900">{portfolioData.profile.email}</span>). I'll reply to your email shortly!
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
-                  className="px-6 py-2 bg-zinc-900 text-white rounded-full text-xs font-semibold hover:bg-black transition-colors"
+                  className="px-6 py-2 bg-zinc-900 text-white rounded-full text-xs font-semibold hover:bg-black transition-colors shadow-md"
                 >
                   Send another message
                 </button>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
+                {errorMessage && (
+                  <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+                    <AlertCircle size={16} className="text-rose-600 flex-shrink-0" />
+                    <span>{errorMessage}</span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {/* Name Input */}
                   <div className="space-y-2">
@@ -134,6 +180,7 @@ export const ContactSection: React.FC = () => {
                     </label>
                     <input
                       type="text"
+                      name="name"
                       required
                       placeholder="Jane Doe"
                       value={formData.name}
@@ -149,6 +196,7 @@ export const ContactSection: React.FC = () => {
                     </label>
                     <input
                       type="email"
+                      name="email"
                       required
                       placeholder="jane@company.com"
                       value={formData.email}
@@ -164,15 +212,16 @@ export const ContactSection: React.FC = () => {
                     Inquiry Type
                   </label>
                   <select
+                    name="projectType"
                     value={formData.projectType}
                     onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
                     className="w-full px-4 py-3 rounded-2xl bg-zinc-50 border border-zinc-200 focus:bg-white focus:outline-none focus:ring-2 focus:ring-zinc-900/10 focus:border-zinc-900 text-sm transition-all text-zinc-800"
                   >
                     <option>Full Stack Web App</option>
-                    <option>Frontend & Motion Design</option>
-                    <option>AI / LLM Integration</option>
-                    <option>Full-Time Engineering Role</option>
-                    <option>Technical Consultation</option>
+                    <option>Frontend & UI Engineering</option>
+                    <option>AI / Machine Learning Project</option>
+                    <option>Full-Time Software Engineering Role</option>
+                    <option>Technical Consultation / Freelance</option>
                   </select>
                 </div>
 
@@ -182,6 +231,7 @@ export const ContactSection: React.FC = () => {
                     Your Message
                   </label>
                   <textarea
+                    name="message"
                     rows={5}
                     required
                     placeholder="Tell me about your project, timeline, and goals..."
@@ -194,10 +244,20 @@ export const ContactSection: React.FC = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-3.5 bg-zinc-900 hover:bg-black text-white rounded-full font-semibold text-sm shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0"
+                  disabled={isSubmitting}
+                  className="w-full py-3.5 bg-zinc-900 hover:bg-black disabled:bg-zinc-700 text-white rounded-full font-semibold text-sm shadow-md hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:cursor-not-allowed"
                 >
-                  <Send size={16} />
-                  <span>Send Message</span>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>Sending directly to Himanshu...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} />
+                      <span>Send Message</span>
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -208,4 +268,3 @@ export const ContactSection: React.FC = () => {
     </section>
   );
 };
-
