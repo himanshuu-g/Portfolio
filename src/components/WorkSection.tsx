@@ -1,14 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { portfolioData, Project } from '../data/portfolioData';
-import { ExternalLink, ArrowUpRight, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Sparkles } from 'lucide-react';
 import { GithubIcon } from './Icons';
 
 interface WorkSectionProps {
   onSelectProject: (project: Project) => void;
 }
 
-// 3D Tilt Card Component
+// 3D Tilt Card Component (No images, text + prominent GitHub button)
 const TiltCard: React.FC<{ project: Project; onSelect: () => void }> = ({
   project,
   onSelect,
@@ -20,8 +20,8 @@ const TiltCard: React.FC<{ project: Project; onSelect: () => void }> = ({
   const mouseXSpring = useSpring(x, { stiffness: 150, damping: 20 });
   const mouseYSpring = useSpring(y, { stiffness: 150, damping: 20 });
 
-  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['10deg', '-10deg']);
-  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-10deg', '10deg']);
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ['7deg', '-7deg']);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ['-7deg', '7deg']);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
@@ -41,6 +41,8 @@ const TiltCard: React.FC<{ project: Project; onSelect: () => void }> = ({
     y.set(0);
   };
 
+  const githubTargetUrl = project.githubUrl || portfolioData.profile.github;
+
   return (
     <motion.div
       ref={cardRef}
@@ -51,87 +53,85 @@ const TiltCard: React.FC<{ project: Project; onSelect: () => void }> = ({
         rotateY,
         transformStyle: 'preserve-3d',
       }}
-      className="group relative bg-white rounded-3xl p-4 md:p-6 border border-zinc-200/90 shadow-md hover:shadow-2xl transition-shadow duration-300 flex flex-col justify-between cursor-pointer"
-      onClick={onSelect}
+      className="group relative bg-white rounded-3xl p-6 sm:p-8 border border-zinc-200/90 shadow-sm hover:shadow-xl transition-shadow duration-300 flex flex-col justify-between"
     >
       <div>
-        {/* Project Thumbnail with Zoom on Hover */}
-        <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden bg-zinc-100 mb-6 border border-zinc-100">
-          <img
-            src={project.thumbnail}
-            alt={project.title}
-            className="w-full h-full object-cover filter contrast-105 group-hover:scale-105 transition-transform duration-500 ease-out"
-          />
-          <div className="absolute top-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-md rounded-full text-xs font-mono text-zinc-800 font-medium shadow-sm">
-            {project.category}
+        {/* Top Meta Row: Category Badge + Year */}
+        <div className="flex items-center justify-between gap-2 mb-5">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-100 text-xs font-mono text-zinc-800 font-semibold border border-zinc-200/70">
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-900" />
+            <span>{project.category}</span>
           </div>
-          <div className="absolute top-3 right-3 px-3 py-1 bg-zinc-900/80 backdrop-blur-md rounded-full text-xs font-mono text-zinc-100 shadow-sm">
+          <span className="px-3 py-1 rounded-full bg-zinc-900 text-white text-xs font-mono font-medium">
             {project.year}
-          </div>
+          </span>
         </div>
 
-        {/* Title & Subtitle */}
-        <div className="space-y-1 mb-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xl md:text-2xl font-black text-zinc-950 tracking-tight group-hover:text-zinc-700 transition-colors">
-              {project.title}
-            </h3>
-            <div className="p-2 rounded-full bg-zinc-100 group-hover:bg-zinc-900 group-hover:text-white transition-colors">
-              <ArrowUpRight size={18} />
-            </div>
-          </div>
-          <p className="text-zinc-600 text-sm line-clamp-2">
+        {/* Project Title & Subtitle */}
+        <div className="space-y-1.5 mb-3">
+          <h3 className="text-2xl sm:text-3xl font-black text-zinc-950 tracking-tight">
+            {project.title}
+          </h3>
+          <p className="text-sm font-semibold text-zinc-700">
             {project.subtitle}
           </p>
         </div>
 
+        {/* Description */}
+        <p className="text-zinc-600 text-sm leading-relaxed mb-5">
+          {project.description}
+        </p>
+
+        {/* Highlights / Metrics Grid */}
+        {project.metrics && project.metrics.length > 0 && (
+          <div className="grid grid-cols-3 gap-2 p-3 bg-zinc-50 rounded-2xl border border-zinc-100 mb-5">
+            {project.metrics.map((m, idx) => (
+              <div key={idx} className="text-center px-1">
+                <span className="text-[10px] uppercase font-mono text-zinc-400 block truncate">
+                  {m.label}
+                </span>
+                <span className="text-xs font-bold text-zinc-900 block truncate">
+                  {m.value}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Tech Stack Chips */}
-        <div className="flex flex-wrap gap-1.5 pt-2">
-          {project.techStack.slice(0, 4).map((tech, idx) => (
+        <div className="flex flex-wrap gap-1.5 mb-6">
+          {project.techStack.map((tech, idx) => (
             <span
               key={idx}
-              className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-zinc-100 text-zinc-600"
+              className="text-xs font-mono px-3 py-1 rounded-full bg-zinc-100 text-zinc-700 font-medium border border-zinc-200/60"
             >
               {tech}
             </span>
           ))}
-          {project.techStack.length > 4 && (
-            <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-zinc-100 text-zinc-400">
-              +{project.techStack.length - 4}
-            </span>
-          )}
         </div>
       </div>
 
-      {/* Card Action Footer */}
-      <div className="pt-6 mt-4 border-t border-zinc-100 flex items-center justify-between">
-        <span className="text-xs font-semibold text-zinc-900 group-hover:underline">
-          View Case Study & Metrics →
-        </span>
-        <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-          {project.githubUrl && (
-            <a
-              href={project.githubUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="p-2 rounded-full hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 transition-colors"
-              title="GitHub Repository"
-            >
-              <GithubIcon size={16} />
-            </a>
-          )}
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="p-2 rounded-full hover:bg-zinc-100 text-zinc-500 hover:text-zinc-900 transition-colors"
-              title="Live Demo"
-            >
-              <ExternalLink size={16} />
-            </a>
-          )}
-        </div>
+      {/* Action Footer: Prominent GitHub Redirect Button & Case Study details */}
+      <div className="pt-5 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onSelect}
+          className="text-xs font-semibold text-zinc-500 hover:text-zinc-900 transition-colors order-2 sm:order-1"
+        >
+          View Case Study & Overview →
+        </button>
+
+        {/* GitHub Redirect Button */}
+        <a
+          href={githubTargetUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-zinc-900 hover:bg-black text-white text-xs font-semibold rounded-full shadow-md hover:shadow-xl transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 order-1 sm:order-2"
+        >
+          <GithubIcon size={16} />
+          <span>View GitHub Repo</span>
+          <ArrowUpRight size={15} className="opacity-80" />
+        </a>
       </div>
     </motion.div>
   );
@@ -145,7 +145,6 @@ export const WorkSection: React.FC<WorkSectionProps> = ({ onSelectProject }) => 
     'Full Stack',
     'Frontend',
     'AI / Machine Learning',
-    'Cloud & Systems',
   ];
 
   const filteredProjects =
